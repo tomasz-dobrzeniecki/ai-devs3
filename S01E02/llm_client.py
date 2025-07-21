@@ -6,10 +6,7 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 
 def get_answer(memory_dump: str, question: str) -> str:
     
-    messages = [
-        {
-            "role": "system",
-            "content": """You are a robot verification system following RoboISO 2230 standard.
+    developer = """You are a robot verification system following RoboISO 2230 standard.
             Your task is to answer questions as if you were a robot with specific incorrect information programmed into your memory.
 
             CRITICAL RULES:
@@ -26,22 +23,16 @@ def get_answer(memory_dump: str, question: str) -> str:
             8. ALWAYS answer in English
             9. ALWAYS be direct and concise - just the answer, nothing else
             """
-        },
-        {
-            "role": "user",
-            "content": f"Memory dump:\n{memory_dump}\n\nQuestion: {question}\n\nAnswer:"
-        }
-    ]
 
     try:
-        response = client.chat.completions.create(
+        response = client.responses.create(
             model="gpt-4.1-nano",
-            messages=messages,
-            temperature=0,
-            max_tokens=150
+            instructions=developer,
+            input=f"Memory dump:\n{memory_dump}\n\nQuestion: {question}\n\nAnswer:",
+            temperature=0
         )
 
-        answer = response.choices[0].message.content.strip()
+        answer = response.output_text
         logger.debug(f"Received answer: {answer}")
         return answer
     except Exception as e:
