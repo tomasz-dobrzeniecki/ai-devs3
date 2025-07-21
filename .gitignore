@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg-info/
+*.egg
+*.env
+.venv/
+env/
+venv/
+ENV/
+.Python
+
+# VSCode/Cursor/IDE
+.vscode/
+.idea/
+*.swp
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Secret/config files
+*.env
+*.toml
+secrets.toml
+.streamlit/secrets.toml
+
+# Cache/log/output
+.cache/
+logs/
+*.log
+output/
+cache/
