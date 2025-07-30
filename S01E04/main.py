@@ -1,9 +1,19 @@
-from openai import OpenAI
-from dotenv import load_dotenv
+from common.llm_client import LLMClient
+from common.logger import setup_logger
 import os
+from dotenv import load_dotenv
 
+# Ensure logs directory exists
+os.makedirs("logs", exist_ok=True)
+
+# Load environment variables
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# Initialize logger
+logger = setup_logger(logfile="logs/s01e04.log", level="DEBUG")
+
+llm = LLMClient(api_key=OPENAI_API_KEY, model="gpt-4o-mini")
 
 prompt = """
 Jesteś robotem poruszającym się po siatce magazynowej o 6 kolumnach (A do F) i 4 rzędach (1 do 4). A1 to górny lewy róg, F4 to dolny prawy róg.
@@ -28,21 +38,13 @@ Podaj wynik w formacie JSON:
 
 Zwróć tylko poprawny JSON. Nie dodawaj komentarzy.
 """
-prompt2 = """Jesteś robotem przemysłowym poruszającym się po siatce magazynowej. Siatka składa się z:
-            Kolumn: A do F (od lewej do prawej)
-            Rzędów: 1 do 4 (od góry do dołu)
-            Każda pozycja opisana jest w formacie [kolumna][rząd], np. A1, C3, F4
-            Startujesz w pozycji A4, a twoim celem jest F4. Musisz poruszać się po siatce, wykonując dokładnie 9 kroków, aby dotrzeć do celu.
-            Możesz używać tylko następujących poleceń ruchu:
-            "UP" (w górę), "DOWN" (w dół), "LEFT" (w lewo), "RIGHT" (w prawo)
-            Twoim zadaniem jest wygenerować poprawny plik JSON zawierający dwa pola:
-            "thinking" – krótki opis trasy (np. jak obchodzisz przeszkody)
-            "steps" – pojedynczy string z dokładnie 9 ruchami, rozdzielonymi przecinkami, np. "UP, RIGHT, RIGHT, DOWN, RIGHT, UP, RIGHT, DOWN, RIGHT"
-            Zwróć tylko poprawny JSON.
-            Masz wykonać następującą trasę góra, góra, prawo, prawo, dół, dół, prawo, prawo, prawo"""
-response = client.responses.create(
-    model="gpt-4o-mini",
-    input=prompt,
-    temperature=0
-)
-print(response.output_text)
+
+try:
+    logger.info("Sending prompt to LLM...")
+    logger.debug(f"Prompt: {prompt}")
+    response = llm.ask(prompt, temperature=0)
+    logger.info("Received response from LLM.")
+    logger.debug(f"Response: {response}")
+    print(response)
+except Exception as e:
+    logger.error(f"Error during LLM call: {e}")

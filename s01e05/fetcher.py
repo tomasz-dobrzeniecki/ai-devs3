@@ -1,13 +1,12 @@
-import requests
-from logger import logger
 from config import DATA_URL
+from common.data_fetcher import DataFetcher
 
-def fetch_data() -> str | None:
+def fetch_data(logger) -> str | None:
     try:
         logger.info("Starting fetching data...")
-        response = requests.get(DATA_URL)
-        response.raise_for_status()
-        return response.text.strip()
-    except requests.RequestException as e:
+        fetcher = DataFetcher()
+        response = fetcher.fetch_text(DATA_URL)
+        return response.strip()
+    except Exception as e:
         logger.error(f"Error fetching data: {e}")
         return None

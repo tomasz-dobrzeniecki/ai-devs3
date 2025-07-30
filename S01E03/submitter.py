@@ -1,8 +1,7 @@
-import requests
 from config import API_KEY, SUBMIT_URL
-from loguru import logger
+from common.data_submitter import DataSubmitter
 
-def submit_payload(original_data: dict, corrected_data: list[dict]):
+def submit_payload(original_data: dict, corrected_data: list[dict], logger):
     payload = {
         "task": "JSON",
         "apikey": API_KEY,
@@ -15,6 +14,7 @@ def submit_payload(original_data: dict, corrected_data: list[dict]):
     }
 
     logger.info("Submitting corrected data...")
-    response = requests.post(SUBMIT_URL, json=payload)
+    submitter = DataSubmitter()
+    response = submitter.submit_json(SUBMIT_URL, payload)
     logger.success(f"Status code: {response.status_code}")
     logger.debug(f"Response: {response.text}")

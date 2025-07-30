@@ -1,4 +1,4 @@
-requests
-python-dotenv
 openai
 loguru
+python-dotenv
+requests

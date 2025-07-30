@@ -1,7 +1,8 @@
 from pathlib import Path
-from loguru import logger
+from openai import OpenAI
+from config import OPENAI_API_KEY
 
-def transcribe_audio(file_path: str, client) -> str:
+def transcribe_audio(file_path: str, client, logger) -> str:
     try:
         with open(file_path, "rb") as audio_file:
             transcript = client.audio.transcriptions.create(
@@ -14,9 +15,10 @@ def transcribe_audio(file_path: str, client) -> str:
         logger.error(f"Transcription failed for {file_path}: {e}")
         return ""
 
-def get_all_transcriptions(audio_dir: str, client) -> dict:
+def get_all_transcriptions(audio_dir: str, logger) -> dict:
+    client = OpenAI(api_key=OPENAI_API_KEY)
     transcriptions = {}
     for audio_file in Path(audio_dir).glob("*.m4a"):
         logger.info(f"Transcribing {audio_file.name}...")
-        transcriptions[audio_file.stem] = transcribe_audio(str(audio_file), client)
+        transcriptions[audio_file.stem] = transcribe_audio(str(audio_file), client, logger)
     return transcriptions
