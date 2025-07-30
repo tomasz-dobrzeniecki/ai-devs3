@@ -12,7 +12,7 @@ os.makedirs("logs", exist_ok=True)
 logger = setup_logger(logfile="logs/s02e02.log", level="DEBUG")
 
 def main():
-    map_path = "map2.jpg"
+    map_path = "map.jpg"
     if not os.path.exists(map_path):
         logger.error(f"File not found: {map_path}")
         return
