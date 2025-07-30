@@ -1,0 +1,6 @@
+openai
+python-dotenv
+loguru
+opencv-python
+numpy
+pillow 
